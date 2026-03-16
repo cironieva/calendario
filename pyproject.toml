@@ -1,0 +1,20 @@
+[project]
+name = "calendario"
+version = "0.1.0"
+description = "Generador de calendarios en PDF"
+readme = "README.md"
+requires-python = ">=3.8"
+
+dependencies = [
+    "reportlab"
+]
+
+authors = [
+  { name = "cironieva" }
+]
+
+license = { text = "GPL-3.0-or-later" }
+
+[project.scripts]
+calendario = "calendario.main:main"
+
