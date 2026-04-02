@@ -1,12 +1,14 @@
-from datetime import timedelta
+from __future__ import annotations
+
+from datetime import date, timedelta
 
 MESES = [
-    "enero","febrero","marzo","abril","mayo","junio",
-    "julio","agosto","septiembre","octubre","noviembre","diciembre"
+    "enero", "febrero", "marzo", "abril", "mayo", "junio",
+    "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre",
 ]
 
 
-def calcular_semanas(inicio, fin):
+def calcular_semanas(inicio: date, fin: date) -> tuple[date, date, int]:
 
     start_monday = inicio - timedelta(days=inicio.weekday())
     end_sunday = fin + timedelta(days=(6 - fin.weekday()))
@@ -17,7 +19,7 @@ def calcular_semanas(inicio, fin):
     return start_monday, end_sunday, num_weeks
 
 
-def formatear_fecha(fecha, inicio_calendario):
+def formatear_fecha(fecha: date, inicio_calendario: date) -> str:
 
     dia = fecha.day
     mes = MESES[fecha.month - 1]
@@ -26,4 +28,3 @@ def formatear_fecha(fecha, inicio_calendario):
         return f"{dia} de {mes}"
 
     return f"{dia}"
-

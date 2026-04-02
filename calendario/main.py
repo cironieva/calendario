@@ -1,14 +1,16 @@
 #!/usr/bin/env python3
+from __future__ import annotations
 
+import argparse
 import os
 import sys
-import argparse
 from datetime import datetime
 
-from .pdf import generar_pdf
 from . import __version__
+from .pdf import generar_pdf
 
-def obtener_nombre_archivo(limite=999):
+
+def obtener_nombre_archivo(limite: int = 999) -> str:
 
     for contador in range(1, limite + 1):
 
@@ -23,7 +25,7 @@ def obtener_nombre_archivo(limite=999):
     )
 
 
-def parsear_argumentos():
+def parsear_argumentos() -> argparse.Namespace:
 
     parser = argparse.ArgumentParser(
         prog="calendario",
@@ -51,7 +53,7 @@ def parsear_argumentos():
         "-m",
         "--media",
         action="store_true",
-        help="generar calendario de media página"
+        help="generar calendario de media pagina"
     )
 
     parser.add_argument(
@@ -63,7 +65,7 @@ def parsear_argumentos():
     return parser.parse_args()
 
 
-def main():
+def main() -> None:
 
     args = parsear_argumentos()
 
@@ -96,4 +98,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
