@@ -1,7 +1,7 @@
 [project]
 name = "calendario"
 version = "0.1.0"
-description = "Generador de calendarios en PDF"
+description = "Generador de calendarios en PDF, SVG y PNG"
 readme = "README.md"
 requires-python = ">=3.8"
 
@@ -17,6 +17,7 @@ license = { text = "GPL-3.0-or-later" }
 
 [project.optional-dependencies]
 dev = ["pytest"]
+png = ["rlPyCairo"]
 
 [project.scripts]
 calendario = "calendario.main:main"

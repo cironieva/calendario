@@ -8,14 +8,27 @@ import sys
 from datetime import datetime
 
 from . import __version__
-from .pdf import generar_pdf
+from .pdf import generar_pdf, generar_svg, generar_png
 
 
-def obtener_nombre_archivo(limite: int = 999) -> str:
+FORMATOS_EXTENSION = {
+    "pdf": ".pdf",
+    "svg": ".svg",
+    "png": ".png",
+}
+
+GENERADORES = {
+    "pdf": generar_pdf,
+    "svg": generar_svg,
+    "png": generar_png,
+}
+
+
+def obtener_nombre_archivo(extension: str = ".pdf", limite: int = 999) -> str:
 
     for contador in range(1, limite + 1):
 
-        nombre = f"calendario-{contador:02d}.pdf"
+        nombre = f"calendario-{contador:02d}{extension}"
 
         if not os.path.exists(nombre):
             return nombre
@@ -30,7 +43,7 @@ def parsear_argumentos() -> argparse.Namespace:
 
     parser = argparse.ArgumentParser(
         prog="calendario",
-        description="Genera un calendario en PDF entre dos fechas."
+        description="Genera un calendario en PDF, SVG o PNG entre dos fechas."
     )
 
     parser.add_argument(
@@ -60,7 +73,14 @@ def parsear_argumentos() -> argparse.Namespace:
     parser.add_argument(
         "-o",
         "--output",
-        help="ruta del archivo PDF de salida"
+        help="ruta del archivo de salida"
+    )
+
+    parser.add_argument(
+        "--formato",
+        choices=["pdf", "png", "svg"],
+        default="pdf",
+        help="formato de salida (default: pdf)"
     )
 
     parser.add_argument(
@@ -128,11 +148,14 @@ def main() -> None:
             print(f"Error al leer el archivo de eventos: {e}")
             sys.exit(1)
 
-    nombre_pdf = args.output if args.output else obtener_nombre_archivo()
+    extension = FORMATOS_EXTENSION[args.formato]
+    nombre_archivo = args.output if args.output else obtener_nombre_archivo(extension)
+
+    generador = GENERADORES[args.formato]
 
     try:
-        generar_pdf(
-            nombre_pdf,
+        generador(
+            nombre_archivo,
             inicio,
             fin,
             media_pagina=args.media,
@@ -142,11 +165,14 @@ def main() -> None:
             font_size=args.font_size,
             eventos=eventos,
         )
+    except ImportError as e:
+        print(f"Error: {e}")
+        sys.exit(1)
     except (OSError, IOError, ValueError, KeyError) as e:
-        print(f"Error: no se pudo generar el archivo '{nombre_pdf}': {e}")
+        print(f"Error: no se pudo generar el archivo '{nombre_archivo}': {e}")
         return
 
-    print(f"Calendario creado: {nombre_pdf}")
+    print(f"Calendario creado: {nombre_archivo}")
 
 
 if __name__ == "__main__":
