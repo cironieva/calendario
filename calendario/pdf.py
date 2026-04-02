@@ -1,9 +1,11 @@
-from reportlab.pdfgen import canvas
+from __future__ import annotations
+
+from datetime import date, timedelta
+
 from reportlab.lib.pagesizes import A4
-from datetime import timedelta
+from reportlab.pdfgen import canvas
 
 from .fechas import calcular_semanas, formatear_fecha
-
 
 MARGIN = 50
 HEADER_HEIGHT = 20
@@ -11,13 +13,19 @@ HEADER_HEIGHT = 20
 FONT_HEADER = ("Courier-Bold", 11)
 FONT_DAYS = ("Helvetica", 8)
 
+CELL_TEXT_OFFSET_X = 5
+CELL_TEXT_OFFSET_Y = 12
+HEADER_TEXT_OFFSET_Y = 3
+
 DIAS = [
-    "LUNES", "MARTES", "MIÉRCOLES", "JUEVES",
-    "VIERNES", "SÁBADO", "DOMINGO"
+    "LUNES", "MARTES", "MIERCOLES", "JUEVES",
+    "VIERNES", "SABADO", "DOMINGO",
 ]
 
 
-def generar_pdf(nombre_pdf, inicio, fin, media_pagina=False):
+def generar_pdf(
+    nombre_pdf: str, inicio: date, fin: date, media_pagina: bool = False
+) -> None:
 
     width, height = A4
     bottom_limit = height / 2 if media_pagina else MARGIN
@@ -49,9 +57,9 @@ def generar_pdf(nombre_pdf, inicio, fin, media_pagina=False):
         x_center = MARGIN + i * day_width + day_width / 2
         text_width = c.stringWidth(dia)
 
-        c.drawString(x_center - text_width / 2, text_y - 3, dia)
+        c.drawString(x_center - text_width / 2, text_y - HEADER_TEXT_OFFSET_Y, dia)
 
-    # cálculo de semanas
+    # calculo de semanas
     start_monday, end_sunday, num_weeks = calcular_semanas(inicio, fin)
 
     weeks_area_height = header_y - bottom_limit
@@ -73,12 +81,11 @@ def generar_pdf(nombre_pdf, inicio, fin, media_pagina=False):
         col = day % 7
         row = day // 7
 
-        x = MARGIN + col * day_width + 5
-        y = header_y - row * week_height - 12
+        x = MARGIN + col * day_width + CELL_TEXT_OFFSET_X
+        y = header_y - row * week_height - CELL_TEXT_OFFSET_Y
 
         texto = formatear_fecha(fecha, start_monday)
 
         c.drawString(x, y, texto)
 
     c.save()
-

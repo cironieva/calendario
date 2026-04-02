@@ -1,13 +1,15 @@
 #!/usr/bin/env python3
+from __future__ import annotations
 
-import os
 import argparse
+import os
 from datetime import datetime
 
-from .pdf import generar_pdf
 from . import __version__
+from .pdf import generar_pdf
 
-def obtener_nombre_archivo():
+
+def obtener_nombre_archivo() -> str:
 
     contador = 1
 
@@ -21,7 +23,7 @@ def obtener_nombre_archivo():
         contador += 1
 
 
-def parsear_argumentos():
+def parsear_argumentos() -> argparse.Namespace:
 
     parser = argparse.ArgumentParser(
         prog="calendario",
@@ -49,13 +51,13 @@ def parsear_argumentos():
         "-m",
         "--media",
         action="store_true",
-        help="generar calendario de media página"
+        help="generar calendario de media pagina"
     )
- 
+
     return parser.parse_args()
 
 
-def main():
+def main() -> None:
 
     args = parsear_argumentos()
 
@@ -63,7 +65,7 @@ def main():
         inicio = datetime.strptime(args.inicio, "%d-%m-%Y")
         fin = datetime.strptime(args.fin, "%d-%m-%Y")
     except ValueError:
-        print("Error: formato de fecha inválido. Usa DD-MM-AAAA")
+        print("Error: formato de fecha invalido. Usa DD-MM-AAAA")
         return
 
     if inicio > fin:
@@ -76,7 +78,7 @@ def main():
         nombre_pdf,
         inicio,
         fin,
-        media_pagina=args.media
+        media_pagina=args.media,
     )
 
     print(f"Calendario creado: {nombre_pdf}")
@@ -84,4 +86,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
