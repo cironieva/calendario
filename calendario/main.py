@@ -51,7 +51,7 @@ def parsear_argumentos():
         action="store_true",
         help="generar calendario de media página"
     )
- 
+
     return parser.parse_args()
 
 
@@ -72,16 +72,19 @@ def main():
 
     nombre_pdf = obtener_nombre_archivo()
 
-    generar_pdf(
-        nombre_pdf,
-        inicio,
-        fin,
-        media_pagina=args.media
-    )
+    try:
+        generar_pdf(
+            nombre_pdf,
+            inicio,
+            fin,
+            media_pagina=args.media
+        )
+    except (OSError, IOError) as e:
+        print(f"Error: no se pudo generar el archivo '{nombre_pdf}': {e}")
+        return
 
     print(f"Calendario creado: {nombre_pdf}")
 
 
 if __name__ == "__main__":
     main()
-
