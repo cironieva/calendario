@@ -4,16 +4,23 @@ import os
 import argparse
 from datetime import datetime
 
-from .pdf import generar_pdf
+from .pdf import generar_pdf, generar_svg, generar_png
 from . import __version__
 
-def obtener_nombre_archivo():
+FORMATOS_EXTENSION = {
+    "pdf": ".pdf",
+    "svg": ".svg",
+    "png": ".png",
+}
+
+
+def obtener_nombre_archivo(extension=".pdf"):
 
     contador = 1
 
     while True:
 
-        nombre = f"calendario-{contador:02d}.pdf"
+        nombre = f"calendario-{contador:02d}{extension}"
 
         if not os.path.exists(nombre):
             return nombre
@@ -25,7 +32,7 @@ def parsear_argumentos():
 
     parser = argparse.ArgumentParser(
         prog="calendario",
-        description="Genera un calendario en PDF entre dos fechas."
+        description="Genera un calendario en PDF, SVG o PNG entre dos fechas."
     )
 
     parser.add_argument(
@@ -51,8 +58,22 @@ def parsear_argumentos():
         action="store_true",
         help="generar calendario de media página"
     )
- 
+
+    parser.add_argument(
+        "--formato",
+        choices=["pdf", "png", "svg"],
+        default="pdf",
+        help="formato de salida (default: pdf)"
+    )
+
     return parser.parse_args()
+
+
+GENERADORES = {
+    "pdf": generar_pdf,
+    "svg": generar_svg,
+    "png": generar_png,
+}
 
 
 def main():
@@ -70,18 +91,19 @@ def main():
         print("Error: la fecha de inicio no puede ser mayor que la fecha final.")
         return
 
-    nombre_pdf = obtener_nombre_archivo()
+    extension = FORMATOS_EXTENSION[args.formato]
+    nombre_archivo = obtener_nombre_archivo(extension)
 
-    generar_pdf(
-        nombre_pdf,
-        inicio,
-        fin,
-        media_pagina=args.media
-    )
+    generador = GENERADORES[args.formato]
 
-    print(f"Calendario creado: {nombre_pdf}")
+    try:
+        generador(nombre_archivo, inicio, fin, media_pagina=args.media)
+    except ImportError as e:
+        print(f"Error: {e}")
+        return
+
+    print(f"Calendario creado: {nombre_archivo}")
 
 
 if __name__ == "__main__":
     main()
-
