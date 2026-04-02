@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import os
+import json
 import argparse
 from datetime import datetime
 
@@ -51,7 +52,12 @@ def parsear_argumentos():
         action="store_true",
         help="generar calendario de media página"
     )
- 
+
+    parser.add_argument(
+        "--eventos",
+        help="ruta a un archivo JSON con eventos especiales"
+    )
+
     return parser.parse_args()
 
 
@@ -70,13 +76,30 @@ def main():
         print("Error: la fecha de inicio no puede ser mayor que la fecha final.")
         return
 
+    eventos = None
+    if args.eventos:
+        try:
+            with open(args.eventos, encoding="utf-8") as f:
+                datos = json.load(f)
+            eventos = {}
+            for item in datos:
+                fecha = datetime.strptime(item["fecha"], "%d-%m-%Y").date()
+                eventos[fecha] = item["nombre"]
+        except FileNotFoundError:
+            print(f"Error: no se encontró el archivo de eventos: {args.eventos}")
+            return
+        except (json.JSONDecodeError, KeyError, ValueError) as e:
+            print(f"Error al leer el archivo de eventos: {e}")
+            return
+
     nombre_pdf = obtener_nombre_archivo()
 
     generar_pdf(
         nombre_pdf,
         inicio,
         fin,
-        media_pagina=args.media
+        media_pagina=args.media,
+        eventos=eventos
     )
 
     print(f"Calendario creado: {nombre_pdf}")
@@ -84,4 +107,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

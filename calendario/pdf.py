@@ -1,5 +1,6 @@
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4
+from reportlab.lib import colors
 from datetime import timedelta
 
 from .fechas import calcular_semanas, formatear_fecha
@@ -10,6 +11,9 @@ HEADER_HEIGHT = 20
 
 FONT_HEADER = ("Courier-Bold", 11)
 FONT_DAYS = ("Helvetica", 8)
+FONT_EVENTO = ("Helvetica", 6)
+
+COLOR_EVENTO = colors.HexColor("#cc0000")
 
 DIAS = [
     "LUNES", "MARTES", "MIÉRCOLES", "JUEVES",
@@ -17,7 +21,7 @@ DIAS = [
 ]
 
 
-def generar_pdf(nombre_pdf, inicio, fin, media_pagina=False):
+def generar_pdf(nombre_pdf, inicio, fin, media_pagina=False, eventos=None):
 
     width, height = A4
     bottom_limit = height / 2 if media_pagina else MARGIN
@@ -78,7 +82,18 @@ def generar_pdf(nombre_pdf, inicio, fin, media_pagina=False):
 
         texto = formatear_fecha(fecha, start_monday)
 
+        fecha_date = fecha.date() if hasattr(fecha, "date") else fecha
+        es_evento = eventos and fecha_date in eventos
+
+        if es_evento:
+            c.setFillColor(COLOR_EVENTO)
+
         c.drawString(x, y, texto)
 
-    c.save()
+        if es_evento:
+            c.setFont(*FONT_EVENTO)
+            c.drawString(x, y - 8, eventos[fecha_date])
+            c.setFont(*FONT_DAYS)
+            c.setFillColor(colors.black)
 
+    c.save()
