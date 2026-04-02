@@ -1,0 +1,8 @@
+[
+    {"fecha": "01-01-2026", "nombre": "Año Nuevo"},
+    {"fecha": "01-05-2026", "nombre": "Día del Trabajador"},
+    {"fecha": "25-05-2026", "nombre": "Revolución de Mayo"},
+    {"fecha": "20-06-2026", "nombre": "Día de la Bandera"},
+    {"fecha": "09-07-2026", "nombre": "Día de la Independencia"},
+    {"fecha": "25-12-2026", "nombre": "Navidad"}
+]
