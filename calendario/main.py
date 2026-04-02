@@ -111,7 +111,7 @@ def main() -> None:
             margin=args.margin,
             font_size=args.font_size,
         )
-    except (OSError, IOError) as e:
+    except (OSError, IOError, ValueError, KeyError) as e:
         print(f"Error: no se pudo generar el archivo '{nombre_pdf}': {e}")
         return
 
