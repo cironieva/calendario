@@ -7,18 +7,19 @@ from datetime import datetime
 from .pdf import generar_pdf
 from . import __version__
 
-def obtener_nombre_archivo():
+def obtener_nombre_archivo(limite=999):
 
-    contador = 1
-
-    while True:
+    for contador in range(1, limite + 1):
 
         nombre = f"calendario-{contador:02d}.pdf"
 
         if not os.path.exists(nombre):
             return nombre
 
-        contador += 1
+    raise RuntimeError(
+        f"No se pudo generar un nombre de archivo disponible "
+        f"(se verificaron {limite} nombres)."
+    )
 
 
 def parsear_argumentos():
