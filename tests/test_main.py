@@ -9,7 +9,7 @@ class TestMain:
     def test_formato_fecha_invalido(self, capsys):
         main()
         captured = capsys.readouterr()
-        assert "formato de fecha invalido" in captured.out
+        assert "formato de fecha inválido" in captured.out
 
     @patch("sys.argv", ["calendario", "15-03-2025", "01-01-2025"])
     def test_inicio_mayor_que_fin(self, capsys):
