@@ -9,14 +9,14 @@ dependencies = [
     "reportlab"
 ]
 
-[project.optional-dependencies]
-png = ["rlPyCairo"]
-
 authors = [
   { name = "cironieva" }
 ]
 
 license = { text = "GPL-3.0-or-later" }
+
+[project.optional-dependencies]
+png = ["rlPyCairo"]
 
 [project.scripts]
 calendario = "calendario.main:main"
