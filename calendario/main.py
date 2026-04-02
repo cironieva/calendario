@@ -51,7 +51,13 @@ def parsear_argumentos():
         action="store_true",
         help="generar calendario de media página"
     )
- 
+
+    parser.add_argument(
+        "-o",
+        "--output",
+        help="ruta del archivo PDF de salida"
+    )
+
     return parser.parse_args()
 
 
@@ -70,7 +76,7 @@ def main():
         print("Error: la fecha de inicio no puede ser mayor que la fecha final.")
         return
 
-    nombre_pdf = obtener_nombre_archivo()
+    nombre_pdf = args.output if args.output else obtener_nombre_archivo()
 
     generar_pdf(
         nombre_pdf,
