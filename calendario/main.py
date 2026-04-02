@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import os
+import sys
 import argparse
 from datetime import datetime
 
@@ -64,11 +65,11 @@ def main():
         fin = datetime.strptime(args.fin, "%d-%m-%Y")
     except ValueError:
         print("Error: formato de fecha inválido. Usa DD-MM-AAAA")
-        return
+        sys.exit(1)
 
     if inicio > fin:
         print("Error: la fecha de inicio no puede ser mayor que la fecha final.")
-        return
+        sys.exit(1)
 
     nombre_pdf = obtener_nombre_archivo()
 
