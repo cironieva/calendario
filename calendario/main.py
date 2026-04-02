@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import argparse
+import json
 import os
 import sys
 from datetime import datetime
@@ -88,6 +89,11 @@ def parsear_argumentos() -> argparse.Namespace:
         help="tamano de fuente para los numeros de dia (default: 8)"
     )
 
+    parser.add_argument(
+        "--eventos",
+        help="ruta a un archivo JSON con eventos especiales"
+    )
+
     return parser.parse_args()
 
 
@@ -106,6 +112,22 @@ def main() -> None:
         print("Error: la fecha de inicio no puede ser mayor que la fecha final.")
         sys.exit(1)
 
+    eventos = None
+    if args.eventos:
+        try:
+            with open(args.eventos, encoding="utf-8") as f:
+                datos = json.load(f)
+            eventos = {}
+            for item in datos:
+                fecha = datetime.strptime(item["fecha"], "%d-%m-%Y").date()
+                eventos[fecha] = item["nombre"]
+        except FileNotFoundError:
+            print(f"Error: no se encontró el archivo de eventos: {args.eventos}")
+            sys.exit(1)
+        except (json.JSONDecodeError, KeyError, ValueError) as e:
+            print(f"Error al leer el archivo de eventos: {e}")
+            sys.exit(1)
+
     nombre_pdf = args.output if args.output else obtener_nombre_archivo()
 
     try:
@@ -118,6 +140,7 @@ def main() -> None:
             font=args.font,
             margin=args.margin,
             font_size=args.font_size,
+            eventos=eventos,
         )
     except (OSError, IOError, ValueError, KeyError) as e:
         print(f"Error: no se pudo generar el archivo '{nombre_pdf}': {e}")

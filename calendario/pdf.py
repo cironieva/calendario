@@ -12,10 +12,13 @@ from .fechas import calcular_semanas, formatear_fecha
 HEADER_HEIGHT = 20
 
 FONT_HEADER = ("Courier-Bold", 11)
+FONT_EVENTO = ("Helvetica", 6)
 
 CELL_TEXT_OFFSET_X = 5
 CELL_TEXT_OFFSET_Y = 12
 HEADER_TEXT_OFFSET_Y = 3
+
+COLOR_EVENTO = colors.HexColor("#cc0000")
 
 DIAS = [
     "LUNES", "MARTES", "MIERCOLES", "JUEVES",
@@ -26,6 +29,7 @@ DIAS = [
 def generar_pdf(
     nombre_pdf: str, inicio: date, fin: date, media_pagina: bool = False,
     color: str = "#000000", font: str = "Helvetica", margin: int = 50, font_size: int = 8,
+    eventos: dict | None = None,
 ) -> None:
 
     width, height = A4
@@ -94,6 +98,18 @@ def generar_pdf(
 
         texto = formatear_fecha(fecha, start_monday)
 
+        fecha_date = fecha.date() if hasattr(fecha, "date") else fecha
+        es_evento = eventos and fecha_date in eventos
+
+        if es_evento:
+            c.setFillColor(COLOR_EVENTO)
+
         c.drawString(x, y, texto)
+
+        if es_evento:
+            c.setFont(*FONT_EVENTO)
+            c.drawString(x, y - 8, eventos[fecha_date])
+            c.setFont(*font_days)
+            c.setFillColor(hex_color)
 
     c.save()
