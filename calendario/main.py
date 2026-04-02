@@ -62,6 +62,32 @@ def parsear_argumentos() -> argparse.Namespace:
         help="ruta del archivo PDF de salida"
     )
 
+    parser.add_argument(
+        "--color",
+        default="#000000",
+        help="color hexadecimal para lineas y bordes (default: #000000)"
+    )
+
+    parser.add_argument(
+        "--font",
+        default="Helvetica",
+        help="nombre de fuente para los numeros de dia (default: Helvetica)"
+    )
+
+    parser.add_argument(
+        "--margin",
+        type=int,
+        default=50,
+        help="margen en puntos (default: 50)"
+    )
+
+    parser.add_argument(
+        "--font-size",
+        type=int,
+        default=8,
+        help="tamano de fuente para los numeros de dia (default: 8)"
+    )
+
     return parser.parse_args()
 
 
@@ -87,9 +113,13 @@ def main() -> None:
             nombre_pdf,
             inicio,
             fin,
-            media_pagina=args.media
+            media_pagina=args.media,
+            color=args.color,
+            font=args.font,
+            margin=args.margin,
+            font_size=args.font_size,
         )
-    except (OSError, IOError) as e:
+    except (OSError, IOError, ValueError, KeyError) as e:
         print(f"Error: no se pudo generar el archivo '{nombre_pdf}': {e}")
         return
 
