@@ -73,12 +73,16 @@ def main():
 
     nombre_pdf = obtener_nombre_archivo()
 
-    generar_pdf(
-        nombre_pdf,
-        inicio,
-        fin,
-        media_pagina=args.media
-    )
+    try:
+        generar_pdf(
+            nombre_pdf,
+            inicio,
+            fin,
+            media_pagina=args.media
+        )
+    except (OSError, IOError) as e:
+        print(f"Error: no se pudo generar el archivo '{nombre_pdf}': {e}")
+        return
 
     print(f"Calendario creado: {nombre_pdf}")
 
