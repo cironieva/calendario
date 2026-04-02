@@ -3,24 +3,26 @@ from __future__ import annotations
 
 import argparse
 import os
+import sys
 from datetime import datetime
 
 from . import __version__
 from .pdf import generar_pdf
 
 
-def obtener_nombre_archivo() -> str:
+def obtener_nombre_archivo(limite: int = 999) -> str:
 
-    contador = 1
-
-    while True:
+    for contador in range(1, limite + 1):
 
         nombre = f"calendario-{contador:02d}.pdf"
 
         if not os.path.exists(nombre):
             return nombre
 
-        contador += 1
+    raise RuntimeError(
+        f"No se pudo generar un nombre de archivo disponible "
+        f"(se verificaron {limite} nombres)."
+    )
 
 
 def parsear_argumentos() -> argparse.Namespace:
@@ -52,6 +54,12 @@ def parsear_argumentos() -> argparse.Namespace:
         "--media",
         action="store_true",
         help="generar calendario de media pagina"
+    )
+
+    parser.add_argument(
+        "-o",
+        "--output",
+        help="ruta del archivo PDF de salida"
     )
 
     parser.add_argument(
@@ -91,14 +99,14 @@ def main() -> None:
         inicio = datetime.strptime(args.inicio, "%d-%m-%Y")
         fin = datetime.strptime(args.fin, "%d-%m-%Y")
     except ValueError:
-        print("Error: formato de fecha invalido. Usa DD-MM-AAAA")
-        return
+        print("Error: formato de fecha inválido. Usa DD-MM-AAAA")
+        sys.exit(1)
 
     if inicio > fin:
         print("Error: la fecha de inicio no puede ser mayor que la fecha final.")
-        return
+        sys.exit(1)
 
-    nombre_pdf = obtener_nombre_archivo()
+    nombre_pdf = args.output if args.output else obtener_nombre_archivo()
 
     try:
         generar_pdf(
